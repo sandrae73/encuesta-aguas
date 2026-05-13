@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encuesta Manual de Funciones | Aguas de San Jerónimo E.S.P.</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<style>
+:root{--pr:#0D3B6E;--prl:#1557A0;--ac:#0099CC;--acl:#E5F5FB;--gn:#1A7F4B;--gnl:#E8F5EE;--g1:#F8FAFC;--g2:#EEF2F7;--g3:#D6E4F0;--g5:#7E98B0;--g6:#456380;--g8:#1C2D3D;--rd:#C0392B;--or:#D35400;--yw:#D4AC0D;--sh:0 2px 16px rgba(13,59,110,.10);--r:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Trebuchet MS','Lucida Sans Unicode',sans-serif;background:#E8EFF6;color:var(--g8);min-height:100vh}
+.hd{background:var(--pr)}
+.hd-top{padding:14px 28px;display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--ac)}
+.hd-logo{width:48px;height:48px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.hd-t h1{font-family:Georgia,serif;font-size:16px;font-weight:normal;color:#fff}
+.hd-t p{font-size:11px;color:#80CFEA;margin-top:2px;letter-spacing:1px;text-transform:uppercase}
+.hd-meta{padding:7px 28px;background:var(--prl);font-size:11px;color:rgba(255,255,255,.7);display:flex;gap:18px;flex-wrap:wrap}
+.pb-wrap{height:5px;background:var(--g3)}
+.pb{height:5px;background:var(--ac);transition:width .4s ease}
+.mc{max-width:860px;margin:0 auto;padding:26px 14px}
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:16px;overflow:hidden}
+.ch{background:var(--pr);color:#fff;padding:13px 22px;display:flex;align-items:center;gap:11px}
+.cha{background:var(--acl);color:var(--pr);border-bottom:2px solid var(--ac);padding:13px 22px;display:flex;align-items:center;gap:11px}
+.chi{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.chia{width:32px;height:32px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ch h2,.cha h2{font-family:Georgia,serif;font-size:14px;font-weight:normal}
+.ch p{font-size:11px;margin-top:2px;opacity:.75}
+.cha p{font-size:11px;margin-top:2px;color:var(--g6)}
+.cb{padding:20px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg.full{grid-column:1/-1}
+.fgrp{display:flex;flex-direction:column;gap:5px}
+.fgrp label{font-size:11px;font-weight:bold;color:var(--pr);text-transform:uppercase;letter-spacing:.6px}
+.fgrp input,.fgrp select,.fgrp textarea{padding:8px 11px;border:1.5px solid var(--g3);border-radius:6px;font-family:inherit;font-size:13px;color:var(--g8);background:var(--g1);transition:border .2s;outline:none}
+.fgrp input:focus,.fgrp select:focus,.fgrp textarea:focus{border-color:var(--ac);background:#fff}
+.fgrp textarea{min-height:74px;resize:vertical}
+.role-sel{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+.rc{background:#fff;border:3px solid var(--g3);border-radius:12px;padding:26px 18px;text-align:center;cursor:pointer;transition:all .3s}
+.rc:hover{border-color:var(--ac);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,153,204,.15)}
+.rc.sel{border-color:var(--pr);background:var(--acl)}
+.rc .ri{font-size:40px;display:block;margin-bottom:12px}
+.rc h3{font-family:Georgia,serif;font-size:16px;color:var(--pr);margin-bottom:6px}
+.rc p{font-size:12.5px;color:var(--g6);line-height:1.5}
+.ftbl{width:100%;border-collapse:collapse;font-size:12px}
+.ftbl thead tr{background:var(--pr);color:#fff}
+.ftbl thead th{padding:8px 10px;text-align:left;font-size:10.5px;font-weight:normal;letter-spacing:.4px}
+.ftbl thead th:not(:first-child){text-align:center}
+.ftbl tbody tr{border-bottom:1px solid var(--g2)}
+.ftbl tbody tr:hover{background:var(--g1)}
+.ftbl td{padding:8px 10px;vertical-align:middle}
+.ftbl td:not(:first-child){text-align:center}
+.fn-n{font-size:10px;color:var(--ac);font-weight:bold;margin-right:4px}
+.ro{display:flex;align-items:center;gap:3px;font-size:11.5px;cursor:pointer}
+.ro input{cursor:pointer;accent-color:var(--ac)}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ci{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;padding:7px 9px;border:1px solid var(--g3);border-radius:6px;cursor:pointer;line-height:1.4}
+.ci:hover{background:var(--g1)}
+.ci input{cursor:pointer;accent-color:var(--ac);margin-top:2px;flex-shrink:0}
+.sr{margin-bottom:18px}
+.srl{font-size:13px;font-weight:bold;color:var(--pr);margin-bottom:6px}
+.sg{display:flex;align-items:center;gap:8px}
+.slo,.shi{font-size:11px;color:var(--g6);width:90px}
+.slo{text-align:right}
+.sbs{display:flex;gap:4px}
+.sbt{width:32px;height:32px;border:2px solid var(--g3);border-radius:6px;background:#fff;cursor:pointer;font-size:13px;font-weight:bold;color:var(--g6);transition:all .2s;display:flex;align-items:center;justify-content:center}
+.sbt:hover{border-color:var(--ac);color:var(--ac)}
+.sbt.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.sbt[data-v="1"].on{background:var(--rd);border-color:var(--rd)}
+.sbt[data-v="2"].on{background:var(--or);border-color:var(--or)}
+.sbt[data-v="3"].on{background:var(--yw);border-color:var(--yw);color:#333}
+.sbt[data-v="4"].on{background:#27AE60;border-color:#27AE60}
+.sbt[data-v="5"].on{background:var(--gn);border-color:var(--gn)}
+.si{display:flex;align-items:center;gap:5px;margin-bottom:20px;flex-wrap:wrap}
+.sd{width:28px;height:28px;border-radius:50%;background:var(--g3);color:var(--g5);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;transition:all .3s;flex-shrink:0}
+.sd.act{background:var(--ac);color:#fff;box-shadow:0 0 0 3px rgba(0,153,204,.2)}
+.sd.dn{background:var(--gn);color:#fff}
+.sl{flex:1;height:2px;background:var(--g3);min-width:10px}
+.sl.dn{background:var(--gn)}
+.nb{display:flex;justify-content:space-between;align-items:center;margin-top:22px}
+.btn{padding:10px 22px;border:none;border-radius:6px;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.bp{background:var(--pr);color:#fff}.bp:hover{background:var(--prl)}
+.bs{background:var(--g3);color:var(--g6)}.bs:hover{background:var(--g5);color:#fff}
+.bf{background:var(--gn);color:#fff}.bf:hover{background:#145C37}
+.ib{background:var(--acl);border-left:4px solid var(--ac);padding:10px 14px;border-radius:0 6px 6px 0;font-size:12px;color:#2C5F7A;line-height:1.55;margin-bottom:16px}
+.sdiv{display:flex;align-items:center;gap:8px;margin:16px 0 12px}
+.sdiv span{font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;color:var(--pr);white-space:nowrap}
+.sdiv::before,.sdiv::after{content:'';flex:1;height:1px;background:var(--g3)}
+.hidden{display:none!important}
+/* Admin */
+.mw{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.mc2{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:14px;text-align:center}
+.mv{font-size:32px;font-weight:bold;color:var(--pr)}
+.ml{font-size:11px;color:var(--g6);margin-top:3px}
+.bi{margin-bottom:11px}
+.bl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.bt{height:7px;background:var(--g2);border-radius:4px}
+.bf2{height:7px;border-radius:4px;transition:width .5s}
+.ri2{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--g2);gap:10px}
+.ri2:last-child{border-bottom:none}
+.rn{font-size:13.5px;font-weight:bold;color:var(--g8)}
+.rs{font-size:12px;color:var(--g6);margin-top:2px}
+.fb{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.fb select{padding:7px 10px;border:1.5px solid var(--g3);border-radius:6px;font-family:inherit;font-size:13px;color:var(--g8);background:var(--g1)}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:bold}
+.b-bl{background:var(--acl);color:var(--pr)}
+.b-gn{background:var(--gnl);color:var(--gn)}
+/* Loading */
+.lov{position:fixed;inset:0;background:rgba(255,255,255,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:14px}
+.sp{width:38px;height:38px;border:4px solid var(--g3);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* PIN */
+.pinc{max-width:360px;margin:50px auto;background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+/* Success */
+.sw{text-align:center;padding:32px}
+/* Detail */
+.dfr{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--g2);gap:10px}
+/* Charts grid */
+.cg2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:620px){
+.fg,.role-sel,.cg,.cg2{grid-template-columns:1fr}
+.mw{grid-template-columns:1fr 1fr}
+.sg{flex-direction:column;align-items:flex-start}
+.hd-top{padding:10px 14px}.cb{padding:14px}.mc{padding:14px 10px}
+}
+</style>
+</head>
+<body>
+
+<div id="lov" class="lov hidden"><div class="sp"></div><p style="font-size:13px;color:var(--g6)">Procesando…</p></div>
+
+<!-- HEADER -->
+<div class="hd">
+  <div class="hd-top">
+    <div class="hd-logo">💧</div>
+    <div class="hd-t">
+      <h1>Aguas de San Jerónimo E.S.P.</h1>
+      <p>Encuesta · Manual Específico de Funciones · Vigencia 2023</p>
+    </div>
+  </div>
+  <div class="hd-meta">
+    <span>📋 Resolución No. 059 · 30 DIC 2022</span>
+    <span>🔒 Uso interno y confidencial</span>
+  </div>
+</div>
+<div class="pb-wrap"><div class="pb" id="pb" style="width:0%"></div></div>
+
+<div class="mc">
+  <div class="si" id="si"></div>
+
+  <!-- HOME -->
+  <div id="v-home">
+    <div class="card">
+      <div class="cb" style="text-align:center;padding:40px 28px">
+        <div style="font-size:48px;margin-bottom:14px">💧</div>
+        <h2 style="font-family:Georgia,serif;font-size:22px;color:var(--pr);margin-bottom:10px">Manual de Funciones · Vigencia 2023</h2>
+        <p style="color:var(--g6);font-size:13.5px;line-height:1.65;max-width:500px;margin:0 auto 26px">Instrumento de auditoría interna para validar y mejorar el Manual Específico de Funciones de Aguas de San Jerónimo E.S.P. Responda con honestidad — la información es confidencial.</p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+          <button class="btn bp" onclick="showSurvey()" style="font-size:14px;padding:13px 28px">📋 Llenar encuesta</button>
+          <button class="btn" onclick="showAdminLogin()" style="background:var(--gn);color:#fff;font-size:14px;padding:13px 28px">📊 Ver resultados</button>
+        </div>
+        <p style="margin-top:18px;font-size:11px;color:var(--g5)">Los resultados requieren clave de acceso</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SURVEY -->
+  <div id="v-survey" class="hidden">
+
+    <!-- S0: Role -->
+    <div id="s0">
+      <div class="card">
+        <div class="ch"><div class="chi">📋</div><div><h2>Encuesta de Validación del Manual de Funciones</h2><p>Seleccione su rol para personalizar el formulario · ~15 min</p></div></div>
+        <div class="cb">
+          <div class="role-sel">
+            <div class="rc" id="rc-c" onclick="selectRole('c')"><span class="ri">👷</span><h3>Soy Colaborador/a</h3><p>Diligencio la encuesta sobre mis propias funciones y actividades cotidianas.</p></div>
+            <div class="rc" id="rc-j" onclick="selectRole('j')"><span class="ri">📊</span><h3>Soy Jefe Inmediato</h3><p>Diligencio la encuesta sobre las funciones de un colaborador a mi cargo.</p></div>
+          </div>
+          <div class="nb"><button class="btn bs" onclick="showHome()">← Inicio</button><button class="btn bp" id="btn0" onclick="goS(1)" disabled>Continuar →</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S1: ID -->
+    <div id="s1" class="hidden">
+      <div class="card">
+        <div class="ch"><div class="chi">👤</div><div><h2>Sección I — Datos de Identificación</h2><p>Complete los datos básicos del colaborador</p></div></div>
+        <div class="cb">
+          <div id="id-c">
+            <div class="fg">
+              <div class="fgrp"><label>Nombre completo</label><input type="text" id="c-nom" placeholder="Nombre y apellidos"></div>
+              <div class="fgrp"><label>Nombre del jefe inmediato</label><input type="text" id="c-jef" placeholder="Nombre del jefe directo"></div>
+              <div class="fgrp"><label>Cargo que desempeña</label><select id="c-car" onchange="loadFn()"><option value="">— Seleccione —</option></select></div>
+              <div class="fgrp"><label>Área / Coordinación</label><select id="c-are"><option value="">— Seleccione —</option><option>Gerencia</option><option>Coordinación Administrativa</option><option>Coordinación Operativa</option><option>SST / HSEQ</option></select></div>
+              <div class="fgrp"><label>Tiempo en el cargo</label><select id="c-ant"><option value="">— Seleccione —</option><option>Menos de 6 meses</option><option>6 meses a 1 año</option><option>1 a 3 años</option><option>3 a 5 años</option><option>Más de 5 años</option></select></div>
+            </div>
+          </div>
+          <div id="id-j" class="hidden">
+            <div class="sdiv"><span>Datos del evaluador (jefe inmediato)</span></div>
+            <div class="fg">
+              <div class="fgrp"><label>Su nombre completo</label><input type="text" id="j-nom-e" placeholder="Su nombre y apellidos"></div>
+              <div class="fgrp"><label>Su cargo</label><select id="j-car-e"><option value="">— Seleccione —</option><option>Gerente</option><option>Coordinador Administrativo</option><option>Coordinador Operativo</option><option>Operario Calificado</option></select></div>
+            </div>
+            <div class="sdiv"><span>Datos del colaborador evaluado</span></div>
+            <div class="fg">
+              <div class="fgrp"><label>Nombre del colaborador</label><input type="text" id="j-nom-c" placeholder="Nombre del colaborador evaluado"></div>
+              <div class="fgrp"><label>Cargo del colaborador</label><select id="j-car-c" onchange="loadFn()"><option value="">— Seleccione —</option></select></div>
+              <div class="fgrp"><label>Tiempo en el cargo</label><select id="j-ant"><option value="">— Seleccione —</option><option>Menos de 6 meses</option><option>6 meses a 1 año</option><option>1 a 3 años</option><option>3 a 5 años</option><option>Más de 5 años</option></select></div>
+            </div>
+          </div>
+          <div class="nb"><button class="btn bs" onclick="goS(0)">← Atrás</button><button class="btn bp" onclick="goS(2)">Continuar →</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S2: Functions -->
+    <div id="s2" class="hidden">
+      <div class="card">
+        <div class="ch"><div class="chi">✅</div><div><h2>Sección II — Validación de Funciones del Manual</h2><p id="s2-sub">Función por función del cargo seleccionado</p></div></div>
+        <div class="cb">
+          <div class="ib" id="ib-c">Para cada función: indique si la ejecuta, con qué frecuencia, y si cuenta con recursos e instrucciones.</div>
+          <div class="ib hidden" id="ib-j">Para cada función: indique cómo la ejecuta el colaborador. Sea objetivo/a — esta información mejora el cargo y el manual.</div>
+          <div style="overflow-x:auto" id="tbl-c">
+            <table class="ftbl"><thead><tr><th style="width:44%">Función según el Manual</th><th>¿La ejecuta?</th><th>Frecuencia</th><th>¿Tiene recursos / instrucciones?</th></tr></thead>
+            <tbody id="fnt-c"><tr><td colspan="4" style="text-align:center;color:var(--g5);padding:20px;font-style:italic">Seleccione su cargo en el paso anterior</td></tr></tbody></table>
+          </div>
+          <div style="overflow-x:auto;display:none" id="tbl-j">
+            <table class="ftbl"><thead><tr><th style="width:46%">Función según el Manual</th><th>¿Cómo la ejecuta?</th><th>Calidad (1–5)</th><th>Observación</th></tr></thead>
+            <tbody id="fnt-j"><tr><td colspan="4" style="text-align:center;color:var(--g5);padding:20px;font-style:italic">Seleccione el cargo del colaborador en el paso anterior</td></tr></tbody></table>
+          </div>
+          <div class="nb"><button class="btn bs" onclick="goS(1)">← Atrás</button><button class="btn bp" onclick="goS(3)">Continuar →</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3: Extra + obstacles -->
+    <div id="s3" class="hidden">
+      <div id="p3c">
+        <div class="card">
+          <div class="cha"><div class="chia">➕</div><div><h2>Sección III — Funciones No Contempladas en el Manual</h2><p>Actividades que realiza y el manual aún no incluye</p></div></div>
+          <div class="cb">
+            <div class="fgrp"><label>¿Qué actividades realiza regularmente que NO están en su manual?</label><textarea id="c-fnx" placeholder="Ej: Apoyo en facturación, atención de reclamos por WhatsApp, coordinación directa con proveedores..."></textarea></div>
+            <div class="fgrp" style="margin-top:12px"><label>¿Hay funciones del manual que considera obsoletas o que ya no aplican?</label><textarea id="c-fno" placeholder="Ej: La función X ya no se realiza porque el proceso cambió en 2022..."></textarea></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="cha"><div class="chia">🚧</div><div><h2>Sección IV — Obstáculos y Necesidades de Capacitación</h2></div></div>
+          <div class="cb">
+            <p style="font-size:13px;font-weight:bold;color:var(--pr);margin-bottom:9px">Obstáculos en su desempeño (seleccione todos los que apliquen)</p>
+            <div class="cg" id="obs-c-g"></div>
+            <p style="font-size:13px;font-weight:bold;color:var(--pr);margin:16px 0 9px">Necesidades de capacitación</p>
+            <div class="cg" id="cap-c-g"></div>
+          </div>
+        </div>
+      </div>
+      <div id="p3j" class="hidden">
+        <div class="card">
+          <div class="cha"><div class="chia">➕</div><div><h2>Sección III — Funciones Adicionales y Modificaciones</h2><p>Desde su perspectiva como jefe inmediato</p></div></div>
+          <div class="cb">
+            <div class="fgrp"><label>¿Qué actividades realiza el colaborador que NO están en el manual?</label><textarea id="j-fnx" placeholder="Actividades que ejecuta en la práctica pero el manual no contempla..."></textarea></div>
+            <div class="fgrp" style="margin-top:12px"><label>¿Hay funciones del manual que ya no aplican o deberían modificarse?</label><textarea id="j-fno" placeholder="Funciones desactualizadas o que no corresponden a la realidad del cargo..."></textarea></div>
+            <div class="fgrp" style="margin-top:12px"><label>¿El manual refleja adecuadamente la realidad actual del cargo?</label>
+              <select id="j-mok"><option value="">— Seleccione —</option><option>Sí, está completamente actualizado</option><option>Parcialmente, necesita ajustes menores</option><option>No, requiere una revisión significativa</option><option>No, el cargo ha cambiado sustancialmente</option></select>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="cha"><div class="chia">📈</div><div><h2>Sección IV — Evaluación de Eficiencia</h2><p>1 = Muy bajo · 5 = Excelente</p></div></div>
+          <div class="cb">
+            <div class="sr"><div class="srl">Calidad en la ejecución de sus funciones</div><div class="sg"><span class="slo">Muy baja</span><div class="sbs" id="sj1"></div><span class="shi">Excelente</span></div></div>
+            <div class="sr"><div class="srl">Puntualidad y cumplimiento de compromisos</div><div class="sg"><span class="slo">Muy baja</span><div class="sbs" id="sj2"></div><span class="shi">Excelente</span></div></div>
+            <div class="sr"><div class="srl">Iniciativa y resolución de problemas</div><div class="sg"><span class="slo">Muy baja</span><div class="sbs" id="sj3"></div><span class="shi">Excelente</span></div></div>
+            <div class="sr"><div class="srl">Trabajo en equipo y colaboración</div><div class="sg"><span class="slo">Muy baja</span><div class="sbs" id="sj4"></div><span class="shi">Excelente</span></div></div>
+            <div class="sr"><div class="srl">Manejo responsable de recursos asignados</div><div class="sg"><span class="slo">Muy bajo</span><div class="sbs" id="sj5"></div><span class="shi">Excelente</span></div></div>
+            <div style="margin-top:16px"><p style="font-size:13px;font-weight:bold;color:var(--pr);margin-bottom:7px">Carga laboral del colaborador</p>
+              <div style="display:flex;gap:12px;flex-wrap:wrap">
+                <label class="ro"><input type="radio" name="cjl" value="Sobrecargado/a"> ⚡ Sobrecargado/a</label>
+                <label class="ro"><input type="radio" name="cjl" value="En equilibrio"> ⚖️ En equilibrio</label>
+                <label class="ro"><input type="radio" name="cjl" value="Subutilizado/a"> 💤 Subutilizado/a</label>
+              </div>
+            </div>
+            <p style="font-size:13px;font-weight:bold;color:var(--pr);margin:16px 0 9px">Necesidades de capacitación del colaborador</p>
+            <div class="cg" id="cap-j-g"></div>
+            <div class="fgrp" style="margin-top:12px"><label>Observaciones sobre el desempeño general</label><textarea id="j-obs" placeholder="Aspectos a destacar, situaciones que afectan el desempeño..."></textarea></div>
+          </div>
+        </div>
+      </div>
+      <div class="nb"><button class="btn bs" onclick="goS(2)">← Atrás</button><button class="btn bp" onclick="goS(4)">Continuar →</button></div>
+    </div>
+
+    <!-- S4: Perception -->
+    <div id="s4" class="hidden">
+      <div id="p4c">
+        <div class="card">
+          <div class="ch"><div class="chi">🌡</div><div><h2>Sección V — Percepción General</h2><p>1 = Muy bajo / negativo · 5 = Excelente / positivo</p></div></div>
+          <div class="cb">
+            <div class="sr"><div class="srl">¿El manual refleja lo que realmente hace en su día a día?</div><div class="sg"><span class="slo">Nada</span><div class="sbs" id="sc1"></div><span class="shi">Totalmente</span></div></div>
+            <div class="sr"><div class="srl">¿Tiene claridad sobre sus funciones y responsabilidades?</div><div class="sg"><span class="slo">Sin claridad</span><div class="sbs" id="sc2"></div><span class="shi">Total claridad</span></div></div>
+            <div class="sr"><div class="srl">¿Cuenta con las condiciones para cumplir sus funciones?</div><div class="sg"><span class="slo">No las tengo</span><div class="sbs" id="sc3"></div><span class="shi">Completamente</span></div></div>
+            <div class="sr"><div class="srl">¿Qué tan satisfecho/a está con su desempeño actual?</div><div class="sg"><span class="slo">Insatisfecho</span><div class="sbs" id="sc4"></div><span class="shi">Muy satisfecho</span></div></div>
+            <div class="fgrp" style="margin-top:18px"><label>Observaciones finales o comentarios al equipo directivo</label><textarea id="c-com" style="min-height:86px" placeholder="Sugerencias, situaciones importantes, comentarios..."></textarea></div>
+          </div>
+        </div>
+      </div>
+      <div id="p4j" class="hidden">
+        <div class="card">
+          <div class="ch"><div class="chi">📝</div><div><h2>Sección V — Recomendaciones y Propuestas</h2></div></div>
+          <div class="cb">
+            <div class="fgrp"><label>Principales fortalezas del colaborador</label><textarea id="j-for" placeholder="Competencias destacadas, actitudes positivas, logros relevantes..."></textarea></div>
+            <div class="fgrp" style="margin-top:12px"><label>Aspectos que más requieren mejora</label><textarea id="j-mej" placeholder="Áreas de oportunidad, comportamientos a trabajar..."></textarea></div>
+            <div class="fgrp" style="margin-top:12px"><label>Propuesta concreta de modificación al manual para este cargo</label><textarea id="j-pro" placeholder="Funciones a agregar, eliminar o modificar · Ajustes en requisitos de formación..."></textarea></div>
+          </div>
+        </div>
+      </div>
+      <div class="nb"><button class="btn bs" onclick="goS(3)">← Atrás</button><button class="btn bf" onclick="submit()">✅ Enviar encuesta</button></div>
+    </div>
+
+  </div><!-- /survey -->
+
+  <!-- SUCCESS -->
+  <div id="v-ok" class="hidden">
+    <div class="card"><div class="cb sw">
+      <div style="font-size:60px;margin-bottom:14px">✅</div>
+      <h2 style="font-family:Georgia,serif;font-size:22px;color:var(--pr);margin-bottom:10px">¡Encuesta enviada con éxito!</h2>
+      <p style="color:var(--g6);font-size:13.5px;line-height:1.6;max-width:460px;margin:0 auto 22px">Sus respuestas han sido guardadas en el sistema. Gracias por su participación.</p>
+      <div style="background:var(--gnl);border:1px solid #8EC9A8;border-radius:8px;padding:14px 18px;text-align:left;max-width:420px;margin:0 auto 22px">
+        <p style="color:var(--gn);font-size:13px;font-weight:bold;margin-bottom:5px">¿Qué sigue?</p>
+        <ul style="font-size:12.5px;color:var(--g8);line-height:1.8;padding-left:16px">
+          <li>Los resultados se consolidan automáticamente en tiempo real.</li>
+          <li>La Coordinación y la Gerencia analizarán los hallazgos.</li>
+          <li>Se presentarán propuestas de ajuste al Manual de Funciones.</li>
+        </ul>
+      </div>
+      <button class="btn bs" onclick="showHome()">← Volver al inicio</button>
+    </div></div>
+  </div>
+
+  <!-- ADMIN LOGIN -->
+  <div id="v-login" class="hidden">
+    <div class="pinc">
+      <div class="ch"><div class="chi">🔐</div><div><h2>Panel de Resultados</h2><p>Solo para Gerencia y Coordinación Administrativa</p></div></div>
+      <div class="cb">
+        <div class="fgrp" style="margin-bottom:12px"><label>Clave de acceso</label><input type="password" id="apin" placeholder="Ingrese la clave" onkeydown="if(event.key==='Enter')checkPin()"></div>
+        <p id="perr" class="hidden" style="color:var(--rd);font-size:12px;margin-bottom:10px">Clave incorrecta. Intente de nuevo.</p>
+        <div style="display:flex;gap:10px">
+          <button class="btn bs" onclick="showHome()">← Volver</button>
+          <button class="btn bp" onclick="checkPin()" style="flex:1">Ingresar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="v-admin" class="hidden">
+    <div class="mw" id="adm-m"></div>
+    <div class="fb">
+      <span style="font-size:13px;font-weight:bold;color:var(--pr)">Filtrar:</span>
+      <select id="f-r" onchange="renderAdm()"><option value="all">Todos los roles</option><option value="c">Colaboradores</option><option value="j">Jefes inmediatos</option></select>
+      <select id="f-c" onchange="renderAdm()"><option value="all">Todos los cargos</option></select>
+      <button class="btn bs" onclick="loadResp().then(renderAdm)" style="padding:8px 14px">↻ Actualizar</button>
+      <button class="btn bs" onclick="showHome()" style="padding:8px 14px;margin-left:auto">← Salir</button>
+    </div>
+    <div class="cg2">
+      <div class="card" style="margin-bottom:0"><div class="cha"><div class="chia">⚠️</div><div><h2>Obstáculos más frecuentes</h2></div></div><div class="cb" id="ch-obs"></div></div>
+      <div class="card" style="margin-bottom:0"><div class="cha"><div class="chia">🎓</div><div><h2>Necesidades de capacitación</h2></div></div><div class="cb" id="ch-cap"></div></div>
+    </div>
+    <div class="cg2">
+      <div class="card" style="margin-bottom:0"><div class="cha"><div class="chia">❌</div><div><h2>Funciones con brechas</h2></div></div><div class="cb" id="ch-gap"></div></div>
+      <div class="card" style="margin-bottom:0"><div class="cha"><div class="chia">⭐</div><div><h2>Percepción general (colaboradores)</h2></div></div><div class="cb" id="ch-sc"></div></div>
+    </div>
+    <div class="card"><div class="ch"><div class="chi">📋</div><div><h2>Respuestas individuales</h2><p id="r-cnt"></p></div></div><div class="cb" id="r-list"></div></div>
+  </div>
+
+  <!-- DETAIL -->
+  <div id="v-det" class="hidden">
+    <div style="margin-bottom:14px"><button class="btn bs" onclick="showAdm()">← Volver al panel</button></div>
+    <div class="card" id="det-c"></div>
+  </div>
+
+</div><!-- /mc -->
+
+<script>
+// ══ FIREBASE ══
+firebase.initializeApp({
+  apiKey:"AIzaSyDIH4Ec6W0DC73Nprb2I5i8yO2O_V_loGg",
+  authDomain:"aguas-encuesta.firebaseapp.com",
+  projectId:"aguas-encuesta",
+  storageBucket:"aguas-encuesta.firebasestorage.app",
+  messagingSenderId:"84985062478",
+  appId:"1:84985062478:web:be4a617bd74c43d1790f1f"
+});
+const db = firebase.firestore();
+
+// ══ DATA ══
+const PIN = "Aguas2023";
+
+const CARGOS = ["Gerente","Coordinador Administrativo","Coordinador Operativo","Seguridad y Salud en el Trabajo","Operario Calificado","Operario PTAP","Auxiliar Administrativo","Auxiliar de Archivo","Auxiliar Servicios Generales","Conductor","Operario","Operario Jardinero","Fontanero"];
+
+const FN = {
+  "Gerente":["Representar jurídicamente a la empresa en toda clase de asuntos","Fijar políticas y adoptar planes generales de la entidad","Coordinar la elaboración, ejecución y control de planes y programas","Dirigir y velar por el cumplimiento de los objetivos institucionales","Nombrar, remover y administrar el personal según disposiciones vigentes","Establecer, mantener y perfeccionar el Sistema de Control Interno","Liderar la implementación del SGSST, MIPG y sistemas de gestión","Planear, dirigir y coordinar la gestión administrativa, operativa y financiera","Expedir y ejecutar actos, contratos y convenios de su competencia","Ordenar los costos y gastos bajo las normas aplicables","Presentar el presupuesto anual de rentas y gastos","Ejercer el poder disciplinario sobre los empleados","Fijar las tarifas y precios por los servicios que presta la empresa","Ejercer el cobro coactivo de obligaciones a favor de la empresa","Presentar informe anual de actividades a la Junta Directiva"],
+  "Coordinador Administrativo":["Coordinar estudios e investigaciones para mejorar la prestación de servicios","Administrar, controlar y evaluar los programas y actividades del área","Atender adecuadamente a los diferentes usuarios de la entidad","Verificar el presupuesto y tramitar compromisos presupuestales","Mantener al día las obligaciones con terceros y entidades reguladoras","Elaborar y firmar cheques y transferencias electrónicas con Gerencia","Expedir certificados de retención en la fuente e IVA a proveedores","Revisar la documentación que ingresa y sale de la empresa","Apoyar los procesos de compras de bienes y suministros","Administrar el manejo de la caja menor de la entidad","Verificar liquidaciones de prestaciones sociales del personal","Coordinar el área de gestión documental","Establecer indicadores de gestión del área","Informar periódicamente al Gerente sobre el área y sus riesgos","Apoyar la elaboración del plan anual de compras"],
+  "Coordinador Operativo":["Planificar, ejecutar y coordinar las actividades del área operativa","Realizar seguimiento y control al operativo según el PGIRS Municipal","Establecer mecanismos del servicio de Aseo y Acueducto Veredal","Diligenciar planillas de control y presentar informe mensual de indicadores","Realizar la requisición de compras y suministros operativos","Llevar el control del almacén e inventarios de bienes","Controlar y verificar los trabajos con maquinaria y vehículos","Revisar y verificar la programación del personal operativo","Presentar planes para la ampliación de cobertura de servicios","Mantener control de los horarios y la ubicación del personal","Establecer indicadores de gestión operativos","Implementar procedimientos que optimicen los servicios del área"],
+  "Seguridad y Salud en el Trabajo":["Mantener el Sistema de Gestión de Seguridad y Salud en el Trabajo","Responder por el Programa de Capacitación (inducción y re-inducción)","Gestionar y desarrollar condiciones de trabajo y salud del personal","Diseñar e implementar el Plan de Bienestar Laboral","Gestionar la matriz de riesgos de la empresa","Realizar e implementar el plan de emergencias empresarial","Hacer la señalización de todas las áreas de la empresa","Realizar la inspección periódica de extintores","Establecer acciones correctivas, preventivas y de mejora","Programar exámenes de salud ocupacional de ingreso y retiro","Programar jornadas de vacunación del personal","Apoyar los comités laborales (Convivencia, COPASST, desempeño)","Inspeccionar vehículos y acueductos veredales desde SST","Ejecutar la inducción y entrenamiento para trabajadores nuevos"],
+  "Operario Calificado":["Brindar asistencia técnica u operativa de acuerdo a instrucciones recibidas","Coordinar la programación y ejecución operativa de los servicios","Hacer seguimiento diario a las rutas de barrido y recolección","Informar al Coordinador las necesidades de bienes y servicios","Verificar la incorporación de nuevos usuarios de aseo","Velar por la adecuada atención a los usuarios del servicio","Controlar el almacén e inventarios de bienes del área","Distribuir y verificar al personal en sus puestos de trabajo","Verificar las rutas de barrido, recolección y servicios especiales","Socializar a los trabajadores en pautas de seguridad industrial","Adelantar estudios y presentar informes técnicos y estadísticos"],
+  "Operario PTAP":["Operar y controlar las plantas de agua potable del municipio","Controlar la aplicación adecuada de sustancias químicas","Instalar, reparar y mantener equipos e instrumentos de la planta","Tener el control de los equipos y sus respectivos repuestos","Coordinar la ejecución operativa de los servicios según instrucciones","Preparar y presentar informes sobre las actividades desarrolladas","Cumplir con la normatividad de la empresa y del sector de agua","Brindar asistencia técnica u operativa según instrucciones recibidas"],
+  "Auxiliar Administrativo":["Recibir, revisar, clasificar y controlar documentos y correspondencia","Mantener actualizados los registros técnicos, administrativos y financieros","Orientar a los usuarios y suministrar la información solicitada","Registrar las operaciones de ingresos y egresos cuando ocurren","Ingresar las novedades de personal para informes de nómina","Apoyar la elaboración del plan anual de compras","Ingresar al SECOP el Plan de Compras y documentos soporte","Apoyar en la gestión de nómina y prestaciones sociales","Atender adecuadamente a los usuarios en todos sus canales","Verificar diariamente los medios de comunicación (buzón, correo, teléfono)"],
+  "Auxiliar de Archivo":["Recibir, revisar, clasificar y controlar documentos y correspondencia","Organizar la documentación según la Tabla de Retención Documental","Encarpetar, rotular y almacenar las unidades documentales","Mantener actualizado el Inventario Documental de la entidad","Llevar el control de consulta y préstamo de documentos de archivo","Digitalizar la documentación y expedientes de historias laborales","Presentar informes al comité de gestión sobre la gestión documental","Apoyar al área administrativa en los sistemas de información"],
+  "Auxiliar Servicios Generales":["Asear las oficinas y áreas asignadas antes del ingreso de funcionarios","Mantener los baños y lavamanos en óptimas condiciones de aseo","Clasificar la basura en bolsas separadas según el tipo de residuo","Mantener limpios los muebles, enseres, ventanas y paredes","Prestar el servicio de cafetería y atender las reuniones del área","Velar por el orden de las oficinas y zonas comunes","Responder por el inventario y buen uso de los bienes asignados"],
+  "Conductor":["Efectuar los recorridos de recolección de desechos según programación","Conducir el vehículo de acuerdo a instrucciones y capacitación recibida","Verificar diariamente el estado técnico mecánico del vehículo","Diligenciar las planillas para el aforo de los grandes generadores","Apoyar las labores técnico mecánicas de mantenimiento del vehículo","Velar y responder por los materiales que transporta","Llevar el vehículo a los parqueaderos en los horarios determinados","Llevar una bitácora diaria de operaciones y labores por escrito","Cumplir las normas de seguridad vial y prevención de accidentes"],
+  "Operario":["Efectuar los recorridos de recolección de desechos sólidos según programación","Realizar el barrido de vías y áreas públicas del municipio","Recolectar la basura resultante del barrido y limpieza de calles","Cortar el césped y realizar la poda de árboles en áreas públicas","Lavar las áreas públicas del municipio","Solicitar herramientas e insumos necesarios para la operación","Informar al jefe las anomalías presentadas en el desempeño","Recoger los residuos que se derramen durante la recolección"],
+  "Operario Jardinero":["Mantenimiento de zonas verdes, jardines y áreas públicas del municipio","Mantenimiento en el parque principal y áreas públicas de San Jerónimo","Corte de césped en áreas verdes públicas (colegios, canchas, instituciones)","Poda de árboles en áreas públicas (ramas, follajes, recolección y transporte)","Lavado de áreas públicas (atrio de la iglesia y parque principal)","Orientar a los usuarios y suministrar la información solicitada"],
+  "Fontanero":["Supervisar continuamente los tanques de almacenamiento del acueducto","Inspeccionar y verificar el estado de instalaciones y tuberías del sistema","Cambiar y reparar accesorios de válvulas y tuberías del acueducto","Ejecutar excavaciones para localizar daños en redes locales de acueducto","Prestar apoyo en instalación de acometidas y mantenimiento del sistema","Realizar visitas técnicas para viabilidad del servicio y mantenimiento","Reportar anomalías, deterioros, fugas y conexiones ilegales detectadas","Diligenciar los formatos técnicos y entregarlos al área de peticiones","Apoyar la ejecución de obras de reparación o urgencia del acueducto"]
+};
+
+const OBS = ["Falta de equipos o herramientas adecuadas","Falta de capacitación o entrenamiento","Falta de instrucciones o procedimientos claros","Exceso de carga laboral","Problemas de comunicación con el equipo","Falta de insumos o materiales","Funciones duplicadas con otro cargo","Falta de apoyo del jefe inmediato","Problemas de infraestructura o instalaciones"];
+
+const CAP = ["Normatividad del sector de servicios públicos","Herramientas ofimáticas y sistemas de información","Gestión documental y archivo","Seguridad y Salud en el Trabajo","Atención al usuario y servicio al cliente","Conocimientos técnicos específicos del cargo","Liderazgo y gestión de equipos","Gestión ambiental y PGIRS","MIPG y sistemas integrados de gestión"];
+
+// ══ STATE ══
+let role=null, step=0, allR=[];
+
+// ══ INIT ══
+(()=>{
+  CARGOS.forEach(c=>{
+    ['c-car','j-car-c'].forEach(id=>{
+      const o=document.createElement('option');o.value=c;o.textContent=c;
+      document.getElementById(id).appendChild(o);
+    });
+    const o2=document.createElement('option');o2.value=c;o2.textContent=c;
+    document.getElementById('f-c').appendChild(o2);
+  });
+  buildCG('obs-c-g',OBS,'oc');
+  buildCG('cap-c-g',CAP,'cc');
+  buildCG('cap-j-g',CAP,'cj');
+  ['sc1','sc2','sc3','sc4','sj1','sj2','sj3','sj4','sj5'].forEach(buildScale);
+})();
+
+function buildCG(cid,items,name){
+  const c=document.getElementById(cid);
+  items.forEach(it=>{
+    const l=document.createElement('label');l.className='ci';
+    l.innerHTML=`<input type="checkbox" name="${name}" value="${it}"> ${it}`;
+    c.appendChild(l);
+  });
+}
+
+function buildScale(id){
+  const c=document.getElementById(id);if(!c)return;
+  c.innerHTML=[1,2,3,4,5].map(v=>`<button type="button" class="sbt" data-v="${v}" onclick="togS(this,'${id}')">${v}</button>`).join('');
+}
+
+function togS(btn,id){
+  document.getElementById(id).querySelectorAll('.sbt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ══ VIEWS ══
+const VS=['v-home','v-survey','v-ok','v-login','v-admin','v-det'];
+function showV(id){VS.forEach(v=>document.getElementById(v).classList.add('hidden'));document.getElementById(id).classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}
+function showHome(){showV('v-home');document.getElementById('pb').style.width='0%';document.getElementById('si').innerHTML='';}
+function showSurvey(){role=null;step=0;showV('v-survey');goS(0);}
+function showAdminLogin(){showV('v-login');}
+function showAdm(){showV('v-admin');}
+
+function selectRole(r){
+  role=r;
+  document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('rc-'+r).classList.add('sel');
+  document.getElementById('btn0').disabled=false;
+  document.getElementById('id-c').classList.toggle('hidden',r!=='c');
+  document.getElementById('id-j').classList.toggle('hidden',r!=='j');
+}
+
+const SLBLS=['Rol','Identificación','Funciones','Detalles','Percepción'];
+
+function goS(n){
+  step=n;
+  for(let i=0;i<5;i++)document.getElementById('s'+i).classList.toggle('hidden',i!==n);
+  const isC=role==='c';
+  if(n===2){
+    document.getElementById('tbl-c').style.display=isC?'block':'none';
+    document.getElementById('tbl-j').style.display=isC?'none':'block';
+    document.getElementById('ib-c').classList.toggle('hidden',!isC);
+    document.getElementById('ib-j').classList.toggle('hidden',isC);
+    loadFn();
+  }
+  if(n===3){document.getElementById('p3c').classList.toggle('hidden',!isC);document.getElementById('p3j').classList.toggle('hidden',isC);}
+  if(n===4){document.getElementById('p4c').classList.toggle('hidden',!isC);document.getElementById('p4j').classList.toggle('hidden',isC);}
+  updPB();updSI();
+}
+
+function updPB(){document.getElementById('pb').style.width=((step/4)*100)+'%';}
+function updSI(){
+  let h='';
+  SLBLS.forEach((l,i)=>{
+    if(i>0)h+=`<div class="sl ${i<=step?'dn':''}"></div>`;
+    h+=`<div class="sd ${i<step?'dn':i===step?'act':''}" title="${l}">${i<step?'✓':i+1}</div>`;
+  });
+  document.getElementById('si').innerHTML=h;
+}
+
+// ══ FUNCTIONS TABLE ══
+function loadFn(){
+  const cargo=role==='c'?document.getElementById('c-car').value:document.getElementById('j-car-c').value;
+  if(!cargo||!FN[cargo])return;
+  const fns=FN[cargo];
+  if(role==='c'){
+    document.getElementById('fnt-c').innerHTML=fns.map((f,i)=>`<tr>
+      <td><span class="fn-n">${String(i+1).padStart(2,'0')}.</span>${f}</td>
+      <td><div style="display:flex;flex-direction:column;gap:3px;align-items:center">
+        <label class="ro"><input type="radio" name="fe${i}" value="si"> Sí</label>
+        <label class="ro"><input type="radio" name="fe${i}" value="aveces"> A veces</label>
+        <label class="ro"><input type="radio" name="fe${i}" value="no"> No</label>
+      </div></td>
+      <td><select style="font-size:11px;padding:3px 6px;border:1px solid var(--g3);border-radius:4px;width:100%"><option>—</option><option>Diaria</option><option>Semanal</option><option>Mensual</option><option>Esporádica</option><option>Nunca</option></select></td>
+      <td><div style="display:flex;flex-direction:column;gap:3px;align-items:center">
+        <label class="ro"><input type="radio" name="fr${i}" value="si"> Sí</label>
+        <label class="ro"><input type="radio" name="fr${i}" value="parcial"> Parcial</label>
+        <label class="ro"><input type="radio" name="fr${i}" value="no"> No</label>
+      </div></td>
+    </tr>`).join('');
+  } else {
+    document.getElementById('fnt-j').innerHTML=fns.map((f,i)=>`<tr>
+      <td><span class="fn-n">${String(i+1).padStart(2,'0')}.</span>${f}</td>
+      <td><select style="font-size:11px;padding:3px 6px;border:1px solid var(--g3);border-radius:4px;width:100%"><option>—</option><option>La ejecuta bien</option><option>Con dificultad</option><option>No la ejecuta</option><option>No aplica</option></select></td>
+      <td style="text-align:center"><div style="display:flex;gap:2px;justify-content:center">
+        ${[1,2,3,4,5].map(v=>`<button type="button" class="sbt" data-v="${v}" onclick="togR(this,'jfr${i}')" style="width:24px;height:24px;font-size:10px">${v}</button>`).join('')}
+        <input type="hidden" id="jfr${i}" value="">
+      </div></td>
+      <td><input type="text" placeholder="Observación…" style="width:100%;font-size:11px;padding:3px 6px;border:1px solid var(--g3);border-radius:4px;background:var(--g1)" id="jfo${i}"></td>
+    </tr>`).join('');
+  }
+}
+
+function togR(btn,hid){
+  btn.closest('div').querySelectorAll('.sbt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');document.getElementById(hid).value=btn.dataset.v;
+}
+
+// ══ SUBMIT ══
+async function submit(){
+  setL(true);
+  const cargo=role==='c'?document.getElementById('c-car').value:document.getElementById('j-car-c').value;
+  const fns=FN[cargo]||[];
+  const fnR={};
+  if(role==='c'){fns.forEach((_,i)=>{const ch=document.querySelector(`input[name="fe${i}"]:checked`);fnR[i]=ch?ch.value:'';});}
+  else{fns.forEach((_,i)=>{const s=document.querySelector(`#fnt-j tr:nth-child(${i+1}) select`);fnR[i]=s?s.value:'';});}
+  const gc=n=>[...document.querySelectorAll(`input[name="${n}"]:checked`)].map(e=>e.value);
+  const gs=id=>{const s=document.querySelector(`#${id} .sbt.on`);return s?parseInt(s.dataset.v):null;};
+  const data={role,cargo,fecha:new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'2-digit',year:'numeric'}),ts:firebase.firestore.FieldValue.serverTimestamp()};
+  if(role==='c'){
+    Object.assign(data,{nombre:document.getElementById('c-nom').value,jefe:document.getElementById('c-jef').value,area:document.getElementById('c-are').value,antiguedad:document.getElementById('c-ant').value,fnResults:fnR,fnExtra:document.getElementById('c-fnx').value,fnObsoletas:document.getElementById('c-fno').value,obstaculos:gc('oc'),capacitaciones:gc('cc'),scales:{sc1:gs('sc1'),sc2:gs('sc2'),sc3:gs('sc3'),sc4:gs('sc4')},comentarios:document.getElementById('c-com').value});
+  } else {
+    Object.assign(data,{nombreEv:document.getElementById('j-nom-e').value,cargoEv:document.getElementById('j-car-e').value,nombreCo:document.getElementById('j-nom-c').value,antiguedadCo:document.getElementById('j-ant').value,fnResults:fnR,fnExtra:document.getElementById('j-fnx').value,fnObsoletas:document.getElementById('j-fno').value,manualOk:document.getElementById('j-mok').value,eficiencia:{sj1:gs('sj1'),sj2:gs('sj2'),sj3:gs('sj3'),sj4:gs('sj4'),sj5:gs('sj5')},cargaLaboral:document.querySelector('input[name="cjl"]:checked')?.value||'',capacitaciones:gc('cj'),obsEficiencia:document.getElementById('j-obs').value,fortalezas:document.getElementById('j-for').value,mejoras:document.getElementById('j-mej').value,propManual:document.getElementById('j-pro').value});
+  }
+  try{await db.collection('encuestas').add(data);showV('v-ok');}
+  catch(e){alert('Error al guardar. Verifique su conexión e intente de nuevo.\n'+e.message);console.error(e);}
+  setL(false);
+}
+
+// ══ ADMIN ══
+function checkPin(){
+  if(document.getElementById('apin').value===PIN){
+    document.getElementById('perr').classList.add('hidden');
+    document.getElementById('apin').value='';
+    loadResp().then(()=>{renderAdm();showV('v-admin');});
+  } else {document.getElementById('perr').classList.remove('hidden');}
+}
+
+async function loadResp(){
+  setL(true);
+  try{
+    const snap=await db.collection('encuestas').orderBy('ts','desc').get();
+    allR=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const cargos=[...new Set(allR.map(r=>r.cargo).filter(Boolean))];
+    const fc=document.getElementById('f-c');
+    fc.innerHTML='<option value="all">Todos los cargos</option>';
+    cargos.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;fc.appendChild(o);});
+  }catch(e){console.error(e);allR=[];}
+  setL(false);
+}
+
+function getFil(){
+  const fr=document.getElementById('f-r').value,fc=document.getElementById('f-c').value;
+  return allR.filter(r=>(fr==='all'||r.role===fr)&&(fc==='all'||r.cargo===fc));
+}
+
+function renderAdm(){
+  const fil=getFil();
+  // Metrics
+  document.getElementById('adm-m').innerHTML=[
+    {icon:'📥',val:allR.length,lbl:'Respuestas totales'},
+    {icon:'👤',val:allR.filter(r=>r.role==='c').length,lbl:'Colaboradores'},
+    {icon:'⭐',val:allR.filter(r=>r.role==='j').length,lbl:'Evaluaciones jefe'},
+    {icon:'💼',val:new Set(allR.map(r=>r.cargo).filter(Boolean)).size,lbl:'Cargos cubiertos'},
+  ].map(m=>`<div class="mc2"><div style="font-size:22px;margin-bottom:5px">${m.icon}</div><div class="mv">${m.val}</div><div class="ml">${m.lbl}</div></div>`).join('');
+
+  const barChart=(data,color,total)=>data.length===0?'<p style="color:var(--g5);font-size:13px;text-align:center;padding:20px">Sin datos aún</p>':data.map(([k,n])=>`<div class="bi"><div class="bl"><span style="color:var(--g6)">${k}</span><strong style="color:${color}">${n}</strong></div><div class="bt"><div class="bf2" style="width:${total?Math.round((n/total)*100):0}%;background:${color}"></div></div></div>`).join('');
+
+  const obsF={},capF={},fnG={};
+  fil.forEach(r=>{
+    (r.obstaculos||[]).forEach(o=>obsF[o]=(obsF[o]||0)+1);
+    (r.capacitaciones||[]).forEach(c=>capF[c]=(capF[c]||0)+1);
+    Object.entries(r.fnResults||{}).forEach(([i,v])=>{if(v==='no'||v==='Con dificultad'){const k=`${r.cargo}||${i}`;fnG[k]=(fnG[k]||0)+1;}});
+  });
+  document.getElementById('ch-obs').innerHTML=barChart(Object.entries(obsF).sort((a,b)=>b[1]-a[1]).slice(0,6),'var(--rd)',fil.length);
+  document.getElementById('ch-cap').innerHTML=barChart(Object.entries(capF).sort((a,b)=>b[1]-a[1]).slice(0,6),'var(--pr)',fil.length);
+
+  const topG=Object.entries(fnG).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  document.getElementById('ch-gap').innerHTML=topG.length===0?'<p style="color:var(--g5);font-size:13px;text-align:center;padding:20px">Sin datos aún</p>':topG.map(([k,n])=>{
+    const[cargo,idx]=k.split('||');const fn=(FN[cargo]||[])[parseInt(idx)]||'';
+    return`<div style="margin-bottom:11px;padding:7px 9px;background:var(--g1);border-radius:6px;border-left:3px solid var(--rd)"><p style="font-size:9px;color:var(--rd);font-weight:bold;margin-bottom:2px">${cargo}</p><p style="font-size:12px;color:var(--g6);line-height:1.4">${fn.length>70?fn.slice(0,70)+'…':fn}</p><p style="font-size:10px;color:var(--g5);margin-top:2px">${n} ${n===1?'persona':'personas'} con brecha</p></div>`;
+  }).join('');
+
+  const colO=fil.filter(r=>r.role==='c');
+  const scLbls={sc1:'Manual refleja la realidad del cargo',sc2:'Claridad sobre funciones y responsabilidades',sc3:'Condiciones para cumplir las funciones',sc4:'Satisfacción con el desempeño actual'};
+  document.getElementById('ch-sc').innerHTML=Object.entries(scLbls).map(([k,lbl])=>{
+    const vs=colO.map(r=>r.scales?.[k]).filter(Boolean);
+    const avg=vs.length?(vs.reduce((a,b)=>a+b,0)/vs.length).toFixed(1):'-';
+    const pct=avg==='-'?0:(avg/5)*100;
+    const col=avg==='-'?'#888':avg>=4?'var(--gn)':avg>=3?'var(--yw)':'var(--rd)';
+    return`<div class="bi"><div class="bl"><span style="color:var(--g6)">${lbl}</span><strong style="color:${col}">${avg}</strong></div><div class="bt"><div class="bf2" style="width:${pct}%;background:${col}"></div></div></div>`;
+  }).join('')+'<p style="font-size:10px;color:var(--g5);margin-top:10px">Escala 1 a 5 · Solo respuestas de colaboradores</p>';
+
+  document.getElementById('r-cnt').textContent=`${fil.length} de ${allR.length} respuestas`;
+  document.getElementById('r-list').innerHTML=fil.length===0?'<p style="color:var(--g5);text-align:center;padding:20px">No hay respuestas con los filtros seleccionados.</p>':
+    fil.map(r=>`<div class="ri2">
+      <div><div class="rn">${r.role==='c'?r.nombre||'(sin nombre)':(r.nombreCo||'(sin nombre)')}</div><div class="rs">${r.cargo||''} · ${r.fecha||''} ${r.role==='j'&&r.nombreEv?' · Evaluado por: '+r.nombreEv:''}</div></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="badge ${r.role==='c'?'b-bl':'b-gn'}">${r.role==='c'?'Colaborador':'Jefe'}</span>
+        <button class="btn bs" onclick="showDetail('${r.id}')" style="padding:5px 12px;font-size:12px">Ver →</button>
+      </div>
+    </div>`).join('');
+}
+
+function showDetail(id){
+  const r=allR.find(x=>x.id===id);if(!r)return;
+  const fns=FN[r.cargo]||[];
+  let h=`<div class="ch"><div class="chi">📋</div><div><h2>${r.role==='c'?(r.nombre||'Sin nombre'):(r.nombreCo||'Sin nombre')}</h2><p>${r.cargo||''} · ${r.fecha||''} · ${r.role==='c'?'Colaborador':'Evaluado por '+(r.nombreEv||'')}</p></div></div><div class="cb">`;
+  if(fns.length>0&&r.fnResults&&Object.keys(r.fnResults).length>0){
+    h+='<p style="font-size:13px;font-weight:bold;color:var(--pr);margin-bottom:10px">Evaluación de funciones del manual</p>';
+    fns.forEach((fn,i)=>{
+      const v=r.fnResults[i]||'—';
+      const col=(v==='si'||v==='La ejecuta bien')?'var(--gn)':(v==='no'||v==='No la ejecuta')?'var(--rd)':(v==='aveces'||v==='Con dificultad')?'var(--or)':'var(--g5)';
+      const lbl=v==='si'?'Ejecuta bien':v==='aveces'?'A veces':v==='no'?'No ejecuta':v;
+      h+=`<div class="dfr"><span style="font-size:12px;color:var(--g6);flex:1;line-height:1.4"><span style="color:var(--g5);margin-right:4px">${i+1}.</span>${fn}</span><span style="font-size:12px;font-weight:bold;color:${col};white-space:nowrap">${lbl}</span></div>`;
+    });
+  }
+  const af=(lbl,val)=>val?`<div style="margin-top:11px"><p style="font-size:10px;color:var(--g5);margin-bottom:3px">${lbl}</p><p style="font-size:13px;line-height:1.5;background:var(--g1);padding:8px 11px;border-radius:6px">${val}</p></div>`:'';
+  const at=(lbl,arr)=>arr&&arr.length?`<div style="margin-top:11px"><p style="font-size:10px;color:var(--g5);margin-bottom:4px">${lbl}</p>${arr.map(t=>`<span style="display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;background:var(--acl);color:var(--pr);margin:2px">${t}</span>`).join('')}</div>`:'';
+  h+=af('Funciones no contempladas en el manual',r.fnExtra);
+  h+=af('Funciones consideradas obsoletas',r.fnObsoletas);
+  h+=at('Obstáculos reportados',r.obstaculos);
+  h+=at('Necesidades de capacitación',r.capacitaciones);
+  h+=af('Comentarios finales',r.comentarios||r.obsEficiencia);
+  if(r.role==='j'){h+=af('Fortalezas del colaborador',r.fortalezas);h+=af('Aspectos a mejorar',r.mejoras);h+=af('Propuesta de cambio al manual',r.propManual);h+=af('Carga laboral percibida',r.cargaLaboral);}
+  h+='</div>';
+  document.getElementById('det-c').innerHTML=h;
+  showV('v-det');
+}
+
+function setL(show){document.getElementById('lov').classList.toggle('hidden',!show);}
+</script>
+</body>
+</html>
